@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>git代码回滚终极指南 | PeHaZ.OvO</title>
+  
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.6.3/css/all.min.css">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="/style.css">
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+</head>
+
+<body>
+  
+  
+  <header class="l_header pure">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar" class="pure"></div>
+  </div>
+
+	<div class="wrapper">
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" href="/">
+        
+          PeHaZ.OvO
+        
+      </a>
+			<div class="menu navgation">
+				<ul class="h-list">
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/" id="home">
+									<i class="fas fa-grin fa-fw"></i>&nbsp;文章
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/" rel="nofollow" id="categories">
+									<i class="fas fa-folder-open fa-fw"></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/" rel="nofollow" id="tags">
+									<i class="fas fa-hashtag fa-fw"></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/archives/" rel="nofollow" id="archives">
+									<i class="fas fa-archive fa-fw"></i>&nbsp;归档
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+			
+				<div class="m_search">
+					<form name="searchform" class="form u-search-form">
+						<input type="text" class="input u-search-input" placeholder="搜索">
+						<i class="icon fas fa-search fa-fw"></i>
+					</form>
+				</div>
+			
+			<ul class="switcher h-list">
+				
+					<li class="s-search"><a class="fas fa-search fa-fw" href="javascript:void(0)"></a></li>
+				
+				<li class="s-menu"><a class="fas fa-bars fa-fw" href="javascript:void(0)"></a></li>
+			</ul>
+		</div>
+
+		<div class="nav-sub container container--flex">
+			<a class="logo flat-box"></a>
+			<ul class="switcher h-list">
+				<li class="s-comment"><a class="flat-btn fas fa-comments fa-fw" href="javascript:void(0)"></a></li>
+        
+          <li class="s-toc"><a class="flat-btn fas fa-list fa-fw" href="javascript:void(0)"></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone">
+    <header>
+		<nav class="menu navgation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/" id="home">
+								<i class="fas fa-clock fa-fw"></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/archives/" rel="nofollow" id="archives">
+								<i class="fas fa-archive fa-fw"></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/" id="projects">
+								<i class="fas fa-code-branch fa-fw"></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/" rel="nofollow" id="friends">
+								<i class="fas fa-link fa-fw"></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="https://xaoxuu.com/wiki/material-x/" rel="nofollow" id="https:xaoxuu.comwikimaterial-x">
+								<i class="fas fa-book fa-fw"></i>&nbsp;主题文档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/" rel="nofollow" id="about">
+								<i class="fas fa-info-circle fa-fw"></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+
+
+  <div class="l_body nocover">
+    <div class='body-wrapper'>
+      <div class="l_main">
+  
+
+  
+    <article id="post" class="post white-box article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class="meta">
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2018/07/16/article/2018/git代码回滚终极指南/">
+        git代码回滚终极指南
+      </a>
+    </h1>
+  
+
+
+      
+      <div class="new-meta-box">
+        
+          
+        
+          
+            
+  <div class="new-meta-item author">
+    <a href="http://www.peihan.cc" rel="nofollow">
+      
+        <i class="fas fa-user" aria-hidden="true"></i>
+      
+      <p>PeHaZ</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class="notlink">
+    <i class="fas fa-calendar-alt" aria-hidden="true"></i>
+    <p>2018-07-16</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class="notlink">
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          <h1 id="git代码回滚终极指南"><a href="#git代码回滚终极指南" class="headerlink" title="git代码回滚终极指南"></a>git代码回滚终极指南</h1><h2 id="0-背景"><a href="#0-背景" class="headerlink" title="0 背景"></a>0 背景</h2><p>git作为最受欢迎的版本控制工具，被很多开发者所喜欢。撤销回滚操作在git中是非常常用的操作。比如代码上线前需要删除掉其中的一个commit，排查线上代码需要临时增加一些log点，之后需要回退到之前的代码，针对不同的需求场景，需要使用不同的命令。本文从具体的实例出发，详细分析了不同的命令在不同场景下的用处。</p>
+<h2 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1 准备工作"></a>1 准备工作</h2><h3 id="准备一个测试目录"><a href="#准备一个测试目录" class="headerlink" title="准备一个测试目录"></a>准备一个测试目录</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir git_exp</span><br></pre></td></tr></table></figure>
+<h3 id="git初始化"><a href="#git初始化" class="headerlink" title="git初始化"></a>git初始化</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git init</span><br></pre></td></tr></table></figure>
+<h3 id="准备测试内容"><a href="#准备测试内容" class="headerlink" title="准备测试内容"></a>准备测试内容</h3><p>为了使我们的例子更加的简单易懂，我在master分支添加一个a.txt文件，并且提交四次修改。分别增加字母abcd，此时文件内容为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a</span><br><span class="line">b</span><br><span class="line">c</span><br><span class="line">d</span><br></pre></td></tr></table></figure>
+<p>git log如图：<br><img src="http://owgxabs76.bkt.clouddn.com/WX20180716-210813.png" alt="git log"></p>
+<h3 id="推到远程仓库进行备份"><a href="#推到远程仓库进行备份" class="headerlink" title="推到远程仓库进行备份"></a>推到远程仓库进行备份</h3><ul>
+<li>关联远程仓库</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git add remote origin git@github.com:zhaipeihan/git_exp.git</span><br></pre></td></tr></table></figure>
+<ul>
+<li>推送到远程仓库</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push origin master</span><br></pre></td></tr></table></figure>
+<h2 id="2-git-reset"><a href="#2-git-reset" class="headerlink" title="2 git reset"></a>2 git reset</h2><p>git reset命令用于撤销commit，回退到某个版本上。</p>
+<p>我们在之前master的基础上，创建reset_test分支进行测试</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -b reset_test</span><br></pre></td></tr></table></figure>
+<p>我们现在的git log为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">d 75578cd7ae1a222c5fa745a0d2735a3448275a27</span><br><span class="line">c 076a714bed33fce4fa044b18b79f06f180ff3d97</span><br><span class="line">b d1e4634545ae8228556158734dc39e4783ec2d94</span><br><span class="line">a 739fe11e522ffca6c49061c9927e074d5ba3cbbd</span><br></pre></td></tr></table></figure>
+<p>git reset命令常用参数有三个，影响程度从小到大为 –soft –mixed –hard<br>我们依次使用这三个命令来恢复到 b这个commit上</p>
+<h3 id="–soft"><a href="#–soft" class="headerlink" title="–soft"></a>–soft</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reset --soft d1e4634545ae8228556158734dc39e4783ec2d94</span><br></pre></td></tr></table></figure>
+<p>此时git log为：<br><img src="http://owgxabs76.bkt.clouddn.com/WX20180716-221456.png" alt></p>
+<p>git status:<br><img src="http://owgxabs76.bkt.clouddn.com/WX20180716-222012.png" alt></p>
+<p>文件内容：<br><img src="http://owgxabs76.bkt.clouddn.com/WX20180716-221943.png" alt></p>
+<p>–soft参数回退到版本b的提交状态上了，但是保留了之后修改文件内容，只是未提交的状态</p>
+<h3 id="–mixed"><a href="#–mixed" class="headerlink" title="–mixed"></a>–mixed</h3><p>我们使用之前的master分支来新建一个分支恢复到初始状态来测试–mixed</p>
+<p>我们执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reset --mixed d1e4634545ae8228556158734dc39e4783ec2d94</span><br></pre></td></tr></table></figure>
+<p>执行之后的状态：<br><img src="http://owgxabs76.bkt.clouddn.com/WX20180716-223008.png" alt></p>
+<p>–mixed参数同样恢复到版本b提交状态上了，也同样保留了之后修改的文件内容，与–soft不同的是，–mixed还没有提交到缓存区。</p>
+<h3 id="–hard"><a href="#–hard" class="headerlink" title="–hard"></a>–hard</h3><p>我们使用之前的master分支来新建一个分支恢复到初始状态来测试–hard</p>
+<p>我们执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reset --hard d1e4634545ae8228556158734dc39e4783ec2d94</span><br></pre></td></tr></table></figure>
+<p>执行之后的状态：<br><img src="http://owgxabs76.bkt.clouddn.com/WX20180716-223514.png" alt></p>
+<p>–hard同样也恢复到了版本b的提交状态上了，但是–hard丢弃了工作区和缓存区的所有内容，所以之后修改的文件内容并没有保存，使用–hard需要慎重，确定不需要保留之后的修改内容之后再使用。</p>
+<h3 id="小节"><a href="#小节" class="headerlink" title="小节"></a>小节</h3><p>git reset 命令用来回退到某个版本上，其常用的–soft –mixed –hard三个参数对应了不同的修改场景，需要根据具体场景来选择。git reset是一个“危险的”操作，它可能会导致你永久的丢失提交记录。需要注意的是，本地仓库可以用reset来进行回退;如果commit已经push到自己的远程仓库，在reset回退之后，需要git push -f强制覆盖远程分支，否则因为缺少了后面的commit会造成冲突；如果是多人共享的公司远程仓库，建议不要使用reset进行回退版本，因为你回退了版本，会和别人的本地或者他人自己的远程仓库产生冲突，造成不必要的麻烦，如果需要回退共享仓库的版本应该使用下边分析的git revert。</p>
+<h2 id="3-git-revert"><a href="#3-git-revert" class="headerlink" title="3 git revert"></a>3 git revert</h2><p>git reset是直接删除了需要撤销的操作，这是比较危险的操作，git revert是在当前提交之后自动生成一个逆向的提交来达到回滚的效果。</p>
+<p>我们在前面小节的基础上增加b.txt c.txt d.txt三个文件分别进行3次提交，现在的项目结构为：</p>
+<p><img src="http://owgxabs76.bkt.clouddn.com/WX20180717-134819@2x.png" alt></p>
+<p>git log记录为：<br><img src="http://owgxabs76.bkt.clouddn.com/WX20180717-135001@2x.png" alt></p>
+<p>接下来我们使用git revert来撤销add b file这个提交。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git revert 3a1252d048bdd12cae8f1668584bc196428a1072</span><br></pre></td></tr></table></figure>
+<p>执行后的目录结构：</p>
+<p><img src="http://owgxabs76.bkt.clouddn.com/QQ20180717-195444@2x.png" alt><br>执行后的git log记录：<br><img src="http://owgxabs76.bkt.clouddn.com/QQ20180717-195428@2x.png" alt></p>
+<p>通过结果可以看到add b file这个操作已经被撤销，b.txt这个文件已经消失，并且commit历史中新增了一个commit。</p>
+<p>git revert [commit1] [commit2] 可以撤销commit1到commit2之间的所有的提交</p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>git revert命令是在当前的节点上向后生成了新的commit来撤销之前的操作，之前的commit并不会被删除，如果要撤销已经push到远程仓库的commit建议使用git revert,这是一个安全的操作，在后续的合并分支时不会产生冲突。</p>
+<h2 id="3-git-rebase"><a href="#3-git-rebase" class="headerlink" title="3 git rebase"></a>3 git rebase</h2><p>git rebase用来重新编排所有的commit,此处可以用来撤销某个commit。我们此处还是以上一小节的例子来说明git rebase。</p>
+<p>目前的项目结构和git log如上一小节执行git revert之后的状态所示。</p>
+<p>此时我们进行一个撤销add c file的操作。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git rebase -i 3a1252d048bdd12cae8f1668584bc196428a1072</span><br></pre></td></tr></table></figure>
+<p>注意使用git rebase 输入的commit版本号是想要撤销的commit的上一个commit号</p>
+<p>执行该命令后，会出现一个类似交互式的界面，如图：</p>
+<p><img src="http://owgxabs76.bkt.clouddn.com/QQ20180717-201421@2x.png" alt></p>
+<p>我们将想要删除的commit改为 drop 然后保存退出。</p>
+<p>执行之后的目录结果为：<br><img src="http://owgxabs76.bkt.clouddn.com/QQ20180717-201625@2x.png" alt></p>
+<p>add c file的操作已经被撤销，git log 如图：<br><img src="http://owgxabs76.bkt.clouddn.com/QQ20180717-201733@2x.png" alt></p>
+<p>我们可以看到 add c file的操作已经直接被撤销了，并且没有生成新的提交记录。</p>
+<h3 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h3><p>利用git rebase可以达到和git revert相同的效果，主要区别在于git rebase不会生成新的commit。</p>
+<h2 id="4-git-checkout"><a href="#4-git-checkout" class="headerlink" title="4 git checkout"></a>4 git checkout</h2><p>以上提到的都是提交层面的撤销操作，如果是想对未add到缓存区的内容做撤销操作，使用git checkout [filename]</p>
+<p>如果已经add到缓存区，使用git checkout 并没有效果。此时可以使用git reset来回溯到上一个提交点。</p>
+<h2 id="5-总结"><a href="#5-总结" class="headerlink" title="5 总结"></a>5 总结</h2><p>以上我们分析了每一个命令对应的不同的撤销的场景，简单来说，改动未add到缓存区可以使用git checkout来放弃修改；已经提交commit，但是commit未push到远程仓库，可以使用reset来回到某个commit，如果是想删除某个特定的commit,可以使用rebase来操作；如果commit已经推送到远程仓库，建议使用git revert来撤销其中的操作。</p>
+
+        </div>
+        
+          
+
+
+  <section class="meta" id="footer-meta">
+    <hr>
+    <div class="new-meta-box">
+      
+        
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-05-02T23:50:42+08:00">
+  <a class="notlink">
+    <i class="fas fa-clock" aria-hidden="true"></i>
+    <p>最后更新于 2019年5月2日</p>
+  </a>
+</div>
+
+        
+      
+        
+          
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer" href="http://connect.qq.com/widget/shareqq/index.html?url=http://www.peihan.cc/2018/07/16/article/2018/git代码回滚终极指南/&title=git代码回滚终极指南 | PeHaZ.OvO&summary=">
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.peihan.cc/2018/07/16/article/2018/git代码回滚终极指南/&title=git代码回滚终极指南 | PeHaZ.OvO&summary=">
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer" href="http://service.weibo.com/share/share.php?url=http://www.peihan.cc/2018/07/16/article/2018/git代码回滚终极指南/&title=git代码回滚终极指南 | PeHaZ.OvO&summary=">
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2018/07/19/article/2018/【RabbitMq系列一】ubuntu安装rabbitmq/" rel="prev" title="【RabbitMQ系列一】ubuntu安装rabbitmq">
+                                  
+                                      【RabbitMQ系列一】ubuntu安装rabbitmq
+                                  
+                                </a>
+                            </h4>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2018/07/10/article/2018/10分钟利用github-hexo搭建个人blog/" rel="prev" title="10分钟利用github + hexo搭建个人blog">
+                                    
+                                        10分钟利用github + hexo搭建个人blog
+                                    
+                                </a>
+                            </h4>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: 'git代码回滚终极指南',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class="l_side">
+  
+    
+    
+      
+        
+          
+          
+            <section class="widget author">
+  <div class="content pure">
+    
+      <div class="avatar">
+        <img class="avatar" src="/images/avator.jpg">
+      </div>
+    
+    
+    
+  </div>
+</section>
+
+          
+        
+      
+        
+          
+          
+            
+  <section class="widget toc-wrapper">
+    
+<header class="pure">
+  <div><i class="fas fa-list fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;本文目录</div>
+  
+    <div class="wrapper"><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div>
+  
+</header>
+
+    <div class="content pure">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#git代码回滚终极指南"><span class="toc-text">git代码回滚终极指南</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-背景"><span class="toc-text">0 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-准备工作"><span class="toc-text">1 准备工作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#准备一个测试目录"><span class="toc-text">准备一个测试目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git初始化"><span class="toc-text">git初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#准备测试内容"><span class="toc-text">准备测试内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#推到远程仓库进行备份"><span class="toc-text">推到远程仓库进行备份</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-git-reset"><span class="toc-text">2 git reset</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#–soft"><span class="toc-text">–soft</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#–mixed"><span class="toc-text">–mixed</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#–hard"><span class="toc-text">–hard</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#小节"><span class="toc-text">小节</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-git-revert"><span class="toc-text">3 git revert</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-git-rebase"><span class="toc-text">3 git rebase</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#小结-1"><span class="toc-text">小结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-git-checkout"><span class="toc-text">4 git checkout</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-总结"><span class="toc-text">5 总结</span></a></li></ol></li></ol>
+    </div>
+  </section>
+
+
+          
+        
+      
+        
+          
+          
+            <section class="widget grid">
+  
+<header class="pure">
+  <div><i class="fas fa-map-signs fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;站内导航</div>
+  
+</header>
+
+  <div class="content pure">
+    <ul class="grid navgation">
+      
+        <li><a class="flat-box" title="/" href="/" id="home">
+          
+            <i class="fas fa-clock fa-fw" aria-hidden="true"></i>
+          
+          近期文章
+        </a></li>
+      
+        <li><a class="flat-box" title="/archives/" href="/archives/" rel="nofollow" id="archives">
+          
+            <i class="fas fa-archive fa-fw" aria-hidden="true"></i>
+          
+          文章归档
+        </a></li>
+      
+        <li><a class="flat-box" title="/projects/" href="/projects/" id="projects">
+          
+            <i class="fas fa-code-branch fa-fw" aria-hidden="true"></i>
+          
+          开源项目
+        </a></li>
+      
+        <li><a class="flat-box" title="/friends/" href="/friends/" rel="nofollow" id="friends">
+          
+            <i class="fas fa-link fa-fw" aria-hidden="true"></i>
+          
+          我的友链
+        </a></li>
+      
+        <li><a class="flat-box" title="https://xaoxuu.com/wiki/material-x/" href="https://xaoxuu.com/wiki/material-x/" rel="nofollow" id="https:xaoxuu.comwikimaterial-x">
+          
+            <i class="fas fa-book fa-fw" aria-hidden="true"></i>
+          
+          主题文档
+        </a></li>
+      
+        <li><a class="flat-box" title="/about/" href="/about/" rel="nofollow" id="about">
+          
+            <i class="fas fa-info-circle fa-fw" aria-hidden="true"></i>
+          
+          关于小站
+        </a></li>
+      
+    </ul>
+  </div>
+</section>
+
+          
+        
+      
+        
+          
+          
+            
+  <section class="widget category">
+    
+<header class="pure">
+  <div><i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;文章分类</div>
+  
+    <a class="rightBtn" rel="nofollow" href="/categories/" title="/categories/">
+    <i class="fas fa-expand-arrows-alt fa-fw"></i></a>
+  
+</header>
+
+    <div class="content pure">
+      <ul class="entry">
+        
+          <li><a class="flat-box" title="/categories/Netty/" href="/categories/Netty/"><div class="name">Netty</div><div class="badge">(1)</div></a></li>
+        
+          <li><a class="flat-box" title="/categories/python/" href="/categories/python/"><div class="name">python</div><div class="badge">(1)</div></a></li>
+        
+          <li><a class="flat-box" title="/categories/ubuntu/" href="/categories/ubuntu/"><div class="name">ubuntu</div><div class="badge">(1)</div></a></li>
+        
+          <li><a class="flat-box" title="/categories/中间件/" href="/categories/中间件/"><div class="name">中间件</div><div class="badge">(2)</div></a></li>
+        
+          <li><a class="flat-box" title="/categories/前端/" href="/categories/前端/"><div class="name">前端</div><div class="badge">(1)</div></a></li>
+        
+          <li><a class="flat-box" title="/categories/小玩意/" href="/categories/小玩意/"><div class="name">小玩意</div><div class="badge">(1)</div></a></li>
+        
+          <li><a class="flat-box" title="/categories/设计模式/" href="/categories/设计模式/"><div class="name">设计模式</div><div class="badge">(1)</div></a></li>
+        
+      </ul>
+    </div>
+  </section>
+
+
+          
+        
+      
+        
+          
+          
+            
+
+          
+        
+      
+        
+          
+          
+            
+
+
+
+          
+        
+      
+    
+
+  
+</aside>
+
+<footer id="footer" class="clearfix">
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/material-x/" target="_blank" class="codename">Material X</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    var GOOGLE_CUSTOM_SEARCH_API_KEY = "";
+    var GOOGLE_CUSTOM_SEARCH_ENGINE_ID = "";
+    var ALGOLIA_API_KEY = "";
+    var ALGOLIA_APP_ID = "";
+    var ALGOLIA_INDEX_NAME = "";
+    var AZURE_SERVICE_NAME = "";
+    var AZURE_INDEX_NAME = "";
+    var AZURE_QUERY_KEY = "";
+    var BAIDU_API_ID = "";
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/"||"/";
+    if(!ROOT.endsWith('/'))ROOT += '/';
+  </script>
+
+<script src="//instant.page/1.2.2" type="module" integrity="sha384-2xV8M5griQmzyiY3CDqh1dn4z3llDVqZDqzjzcY+jCBCk/a5fXJmuZ/40JJAPeoU"></script>
+
+
+  <script async src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-material-x@19.4.19/js/app.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-material-x@19.4.19/js/search.js"></script>
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+  <script>setLoadingBarProgress(100);</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
